@@ -1,0 +1,26 @@
+[
+  {
+    "slug": "commercial-80kw-dubai",
+    "title": "Rooftop Solar Project – 80 kW (Dubai)",
+    "date": "2025-08-10",
+    "author": "Oryxa Energy Team",
+    "excerpt": "How we cut a client’s electricity bill by ~48% with an 80 kW rooftop system in Al Quoz.",
+    "coverImage": "assets/img/blog/blog-post-1.webp",
+    "contentPath": "assets/posts/80kw-dubai.md",
+    "tags": ["commercial", "dubai", "case-study"],
+    "categories": ["Projects"],
+    "readingMinutes": 5
+  },
+  {
+    "slug": "hybrid-12kw-baghdad",
+    "title": "Hybrid Solar for Villa – 12 kW (Baghdad)",
+    "date": "2025-08-01",
+    "author": "Oryxa Energy Team",
+    "excerpt": "Stable power and lower bills using a 12 kW hybrid system with battery backup.",
+    "coverImage": "assets/img/blog/blog-post-2.webp",
+    "contentPath": "assets/posts/12kw-baghdad.md",
+    "tags": ["residential", "iraq", "hybrid"],
+    "categories": ["Projects"],
+    "readingMinutes": 4
+  }
+]
