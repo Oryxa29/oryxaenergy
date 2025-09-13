@@ -20,8 +20,8 @@
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root { 
   --background-color: #f0eff3; /* Background color for the entire website, including individual sections */
-  --default-color: #434343; /* Default color used for the majority of the text content across the entire website */
-  --heading-color: #e4b635; /* Color for headings, subheadings and title throughout the website */
+  --default-color: #444444; /* Default color used for the majority of the text content across the entire website */
+  --heading-color: #f1c141; /* Color for headings, subheadings and title throughout the website */
   --accent-color: #2b2d7c; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
   --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
   --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
@@ -45,7 +45,7 @@
 }
 
 .dark-background {
-  --background-color: #e4b635;
+  --background-color: #626262;
   --default-color: #ffffff;
   --heading-color: #ffffff;
   --surface-color: #565656;
@@ -827,7 +827,7 @@ section,
 
 .hero .carousel-item:before {
   content: "";
-  background: color-mix(in srgb, var(--background-color), transparent 50%);
+  background: color-mix(in srgb, var(--background-color), transparent 20%);
   position: absolute;
   inset: 0;
   z-index: 2;
@@ -835,7 +835,7 @@ section,
 
 .hero .carousel-item::before {
   content: "";
-  background-color: color-mix(in srgb, var(--background-color), transparent 50%);
+  background-color: color-mix(in srgb, var(--background-color), transparent 20%);
   position: absolute;
   inset: 0;
 }
@@ -2527,4 +2527,111 @@ section,
   padding-left: 5px;
   color: color-mix(in srgb, var(--default-color), transparent 60%);
   font-size: 14px;
+}
+
+/* === Contact card (white box) === */
+.contact .php-email-form{
+  background:#fff;
+  border:1px solid #f1f1f1;
+  border-radius:8px;
+  padding:40px;
+  box-shadow:0 8px 28px rgba(0,0,0,.06);
+}
+
+/* === Fields === */
+.contact .php-email-form input[type=text],
+.contact .php-email-form input[type=email],
+.contact .php-email-form textarea{
+  background:#fff;
+  color:var(--default-color);
+  border:1px solid #e5e7eb;
+  border-radius:0;
+  padding:14px 16px;
+  box-shadow:none;
+}
+.contact .php-email-form input[type=text]::placeholder,
+.contact .php-email-form input[type=email]::placeholder,
+.contact .php-email-form textarea::placeholder{ color:#9ca3af; }
+.contact .php-email-form input[type=text]:focus,
+.contact .php-email-form input[type=email]:focus,
+.contact .php-email-form textarea:focus{
+  border-color:#3e4095;
+  outline:0;
+}
+.contact .php-email-form textarea{ min-height:200px; }
+
+/* === Submit button (purple pill, no underline) === */
+#contactForm button[type=submit]{
+  background:#2b2d7c;
+  color:#fff;
+  border:0;
+  padding:14px 34px;
+  border-radius:9999px;
+  box-shadow:0 6px 16px rgba(43,45,124,.25);
+  font-weight:600;
+  line-height:1;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-block;
+}
+#contactForm button[type=submit]:hover{ background:#3e4095; transform:translateY(-1px); }
+#contactForm button[type=submit]:active{ transform:none; box-shadow:0 4px 12px rgba(43,45,124,.18); }
+#contactForm button[type=submit],
+#contactForm button[type=submit]:hover,
+#contactForm button[type=submit]:focus,
+#contactForm button[type=submit]:active{
+  text-decoration:none; outline:0; box-shadow:inherit;
+}
+
+/* === Feedback messages (text only) === */
+#contactForm .loading,
+#contactForm .sent-message,
+#contactForm .error-message{
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  padding:0;
+  margin:12px 0;
+}
+#contactForm .loading{ color:#6b7280; }
+#contactForm .loading:before{
+  content:"";
+  display:inline-block;
+  width:16px; height:16px; margin-right:8px;
+  border:2px solid currentColor; border-top-color:transparent;
+  border-radius:50%; animation:contact-spin 1s linear infinite;
+}
+#contactForm .sent-message{ color:#059652; }
+#contactForm .error-message{ color:#cb1414; }
+
+@keyframes contact-spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+
+/* Match the white card style of the form */
+.contact .contact-card,
+.contact .php-email-form{
+  background:#fff;
+  border:1px solid #f1f1f1;
+  border-radius:0px;
+  padding:24px;
+  box-shadow:0 8px 28px rgba(0,0,0,.06);
+}
+
+/* Make columns equal height */
+#contact-layout .col-lg-6{ display:flex; }
+#contact-layout .contact-card,
+#contact-layout .php-email-form{ display:flex; flex-direction:column; }
+
+/* Map fills the card */
+.contact .map-wrap{
+  position:relative;
+  flex:1 1 auto;
+  min-height:420px;           /* gives the map a sensible height; adjust if you want */
+}
+.contact .map-wrap iframe{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  border:0;
+  border-radius:0;
 }

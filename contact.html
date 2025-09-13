@@ -139,41 +139,109 @@
 
         </div>
 
-        <div class="row gy-4 mt-1">
-          <div class="col-lg-6" data-aos="fade-up" data-aos-delay="300">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.1445771861163!2d55.17502497483415!3d25.096966835754177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f6b004f556f79%3A0x7eec67d6b3c3b712!2sBarsha%20Heights%20warsan%20towers!5e0!3m2!1sen!2sae!4v1755694666061!5m2!1sen!2sae" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-          </div><!-- End Google Maps -->
+        <div class="row g-4 mt-1 align-items-stretch" id="contact-layout">
+  <!-- Left: Google Map -->
+  <div class="col-12 col-lg-6 d-flex" data-aos="fade-up" data-aos-delay="300">
+    <div class="contact-card flex-fill">
+      <div class="map-wrap">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3613.1445771861163!2d55.17502497483415!3d25.096966835754177!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f6b004f556f79%3A0x7eec67d6b3c3b712!2sBarsha%20Heights%20warsan%20towers!5e0!3m2!1sen!2sae!4v1755694666061!5m2!1sen!2sae"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </div>
+  </div>
+  <!-- End Google Maps -->
 
-          <div class="col-lg-6">
-            <form action="forms/contact.php" method="post" class="php-email-form" data-aos="fade-up" data-aos-delay="400">
-              <div class="row gy-4">
+          <div class="col-12 col-lg-6 d-flex" data-aos="fade-up" data-aos-delay="400">
+    <form action="https://formspree.io/f/xkgvekzn"
+          method="POST"
+          id="contactForm"
+          class="php-email-form flex-fill">
 
-                <div class="col-md-6">
-                  <input type="text" name="name" class="form-control" placeholder="Your Name" required="">
-                </div>
+    <div class="row gy-4">
 
-                <div class="col-md-6 ">
-                  <input type="email" class="form-control" name="email" placeholder="Your Email" required="">
-                </div>
+      <div class="col-md-6">
+        <input type="text" name="name" class="form-control" placeholder="Your Name" required>
+      </div>
 
-                <div class="col-md-12">
-                  <input type="text" class="form-control" name="subject" placeholder="Subject" required="">
-                </div>
+      <div class="col-md-6">
+        <input type="email" name="email" class="form-control" placeholder="Your Email" required>
+      </div>
 
-                <div class="col-md-12">
-                  <textarea class="form-control" name="message" rows="6" placeholder="Message" required=""></textarea>
-                </div>
+      <div class="col-md-12">
+        <input type="text" name="subject" class="form-control" placeholder="Subject" required>
+      </div>
 
-                <div class="col-md-12 text-center">
-                  <div class="loading">Loading</div>
-                  <div class="error-message"></div>
-                  <div class="sent-message">Your message has been sent. Thank you!</div>
+      <div class="col-md-12">
+        <textarea name="message" class="form-control" rows="6" placeholder="Message" required></textarea>
+      </div>
 
-                  <button type="submit">Send Message</button>
-                </div>
+      <input type="hidden" name="_subject" value="New message from Oryxa website">
 
-              </div>
-            </form>
+      <div class="col-md-12 text-center">
+        <div class="loading" style="display:none">Loading</div>
+        <div class="error-message" style="display:none"></div>
+        <div class="sent-message" style="display:none">Your message has been sent. Thank you!</div>
+
+        <button type="submit" class="btn">Send Message</button>
+      </div>
+
+    </div>
+  </form>
+</div>
+
+<script>
+(function () {
+  const form = document.getElementById('contactForm');
+  if (!form) return;
+
+  const loading = form.querySelector('.loading');
+  const sent    = form.querySelector('.sent-message');
+  const errorEl = form.querySelector('.error-message');
+  const submit  = form.querySelector('button[type="submit"]');
+
+  const show = (el, on) => { if (el) el.style.display = on ? 'block' : 'none'; };
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    show(sent, false);
+    show(errorEl, false);
+    show(loading, true);
+    if (submit) { submit.disabled = true; }
+
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+
+      console.debug('Formspree status', res.status);
+
+      if (res.ok) {
+        form.reset();
+        show(sent, true);
+      } else {
+        let msg = 'Oops, something went wrong.';
+        try {
+          const data = await res.json();
+          if (data && data.errors) msg = data.errors.map(e => e.message).join(', ');
+        } catch {}
+        if (errorEl) { errorEl.textContent = msg; show(errorEl, true); }
+      }
+    } catch (err) {
+      if (errorEl) { errorEl.textContent = 'Network error. Please try again.'; show(errorEl, true); }
+    } finally {
+      show(loading, false);
+      if (submit) { submit.disabled = false; }
+    }
+  });
+})();
+</script>
+
           </div><!-- End Contact Form -->
 
         </div>
@@ -248,7 +316,6 @@
 
   <!-- Vendor JS Files -->
   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/vendor/php-email-form/validate.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
