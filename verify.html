@@ -26,20 +26,15 @@
 
   <!-- Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
-
-  <!-- =======================================================
-  * Template Name: Oryxa
-  ======================================================== -->
 </head>
 
 <body class="verify-page">
 
   <header id="header" class="header sticky-top">
-
     <div class="topbar d-flex align-items-center dark-background">
       <div class="container d-flex justify-content-center justify-content-md-between">
         <div class="contact-info d-flex align-items-center">
-          <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:contact@example.com">ask@oryxaenergy.com</a></i>
+          <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:ask@oryxaenergy.com">ask@oryxaenergy.com</a></i>
           <i class="bi bi-phone d-flex align-items-center ms-4"><span>+971(04)-369-5158</span></i>
         </div>
         <div class="social-links d-none d-md-flex align-items-center">
@@ -49,7 +44,7 @@
           <a href="https://www.linkedin.com/company/oryxa-energy-solutions/?viewAsMember=true" class="linkedin"><i class="bi bi-linkedin"></i></a>
         </div>
       </div>
-    </div><!-- End Top Bar -->
+    </div>
 
     <div class="branding">
       <div class="container position-relative d-flex align-items-center justify-content-between">
@@ -62,7 +57,7 @@
             <li><a href="index.html">Home</a></li>
             <li><a href="about.html">About</a></li>
             <li><a href="services.html">Services</a></li>
-            <li><a href="verify.html">Verify</a></li>
+            <li><a href="verify.html" class="active">Verify</a></li>
             <li class="dropdown"><a href="#"><span>Products</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
               <ul>
                 <li class="dropdown"><a href="#"><span>Inverters</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
@@ -97,7 +92,7 @@
         </nav>
         <h1>Verify</h1>
       </div>
-    </div><!-- End Page Title -->
+    </div>
 
     <div class="container">
       <div class="row">
@@ -157,139 +152,138 @@
             <div id="warranty-result" style="margin-top: 20px; font-size: 16px;"></div>
           </section>
 
-          <script type="text/javascript">
-            var gk_isXlsx = false;
-            var gk_xlsxFileLookup = {};
-            var gk_fileData = {};
-            function filledCell(cell) {
-              return cell !== '' && cell != null;
-            }
-            function loadFileData(filename) {
-              if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-                try {
-                  var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                  var firstSheetName = workbook.SheetNames[0];
-                  var worksheet = workbook.Sheets[firstSheetName];
-                  var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                  var filteredData = jsonData.filter(row => row.some(filledCell));
-                  var headerRowIndex = filteredData.findIndex((row, index) =>
-                    row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                  );
-                  if (headerRowIndex === -1 || headerRowIndex > 25) {
-                    headerRowIndex = 0;
-                  }
-                  var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
-                  csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                  return csv;
-                } catch (e) {
-                  console.error(e);
-                  return "";
-                }
-              }
-              return gk_fileData[filename] || "";
-            }
-          </script>
-
+          <!-- UPDATED JS (shows Valid / Expired / Not Registered Warranty) -->
           <script>
-            (function () {
-              const ENDPOINT = 'https://script.google.com/macros/s/AKfycbxDtXSLcVBckov7LZFKrrQzeLkyswirKi4f65uVrPqCjs4OIddusK4R6o9aZITdRuhp/exec';
-              function escapeHtml(s) {
-                return String(s).replace(/[&<>"']/g, m => (
-                  { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[m]
-                ));
-              }
-              function renderResult(container, success, message, extra = '') {
-                container.innerHTML = success
-                  ? `<div style="color:#27ae60;">✅ ${escapeHtml(message)}<br>${extra}</div>`
-                  : `<div style="color:#c0392b;">❌ ${escapeHtml(message)}</div>`;
-              }
-              const productForm = document.getElementById('product-check-form');
-              const productInput = document.getElementById('serialNumber');
-              const productBtn = document.getElementById('verifyProductBtn');
-              const productResult = document.getElementById('product-result');
-              productForm.addEventListener('submit', e => {
-                e.preventDefault();
-                verifyProduct(productInput.value.trim());
-              });
-              productBtn.addEventListener('click', e => {
-                e.preventDefault();
-                productForm.requestSubmit();
-              });
-              async function verifyProduct(serial) {
-                if (!serial) {
-                  renderResult(productResult, false, 'Please enter a serial number.');
-                  return;
-                }
-                productBtn.textContent = 'Checking…';
-                try {
-                  const res = await fetch(ENDPOINT + '?serial=' + encodeURIComponent(serial));
-                  const data = await res.json();
-                  if (data.valid) {
-                    if (!data.model) {
-                      renderResult(productResult, false, 'Valid but missing details. Contact support.');
-                    } else {
-                      renderResult(productResult, true, 'Oryxa Original Product', `
-                        ${data.model ? 'Model: ' + escapeHtml(data.model) + '<br>' : ''}
-                        ${data.warrantyNumber ? 'Warranty No: ' + escapeHtml(data.warrantyNumber) + '<br>' : ''}
-                        ${data.warrantyExpiry ? 'Warranty Expiry: ' + escapeHtml(data.warrantyExpiry) : ''}
-                      `);
-                    }
-                  } else {
-                    renderResult(productResult, false, 'Not an Original Product / Not Found');
-                  }
-                } catch {
-                  renderResult(productResult, false, 'Verification failed. Try again later.');
-                }
-                productBtn.textContent = 'Verify Product';
-              }
-              const warrantyForm = document.getElementById('warranty-check-form');
-              const warrantyInput = document.getElementById('warrantyNumber');
-              const warrantyBtn = document.getElementById('verifyWarrantyBtn');
-              const warrantyResult = document.getElementById('warranty-result');
-              warrantyForm.addEventListener('submit', e => {
-                e.preventDefault();
-                verifyWarranty(warrantyInput.value.trim());
-              });
-              warrantyBtn.addEventListener('click', e => {
-                e.preventDefault();
-                warrantyForm.requestSubmit();
-              });
-              async function verifyWarranty(warranty) {
-                if (!warranty) {
-                  renderResult(warrantyResult, false, 'Please enter a warranty certificate number.');
-                  return;
-                }
-                warrantyBtn.textContent = 'Checking…';
-                try {
-                  const res = await fetch(ENDPOINT + '?warranty=' + encodeURIComponent(warranty));
-                  const data = await res.json();
-                  if (data.valid) {
-                    if (!data.model) {
-                      renderResult(warrantyResult, false, 'Valid but missing details. Contact support.');
-                    } else {
-                      renderResult(warrantyResult, true, 'Valid Oryxa Warranty Certificate', `
-                        ${data.serial ? 'Serial: ' + escapeHtml(data.serial) + '<br>' : ''}
-                        ${data.model ? 'Model: ' + escapeHtml(data.model) + '<br>' : ''}
-                        ${data.warrantyExpiry ? 'Warranty Expiry: ' + escapeHtml(data.warrantyExpiry) : ''}
-                      `);
-                    }
-                  } else {
-                    renderResult(warrantyResult, false, 'Invalid Warranty Certificate');
-                  }
-                } catch {
-                  renderResult(warrantyResult, false, 'Verification failed. Try again later.');
-                }
-                warrantyBtn.textContent = 'Verify Warranty';
-              }
-            })();
-          </script>
+          (function () {
+            // ===== CONFIG =====
+            // EDIT HERE: paste your deployed Apps Script Web App URL (ends with /exec)
+            const BASE_URL = 'https://script.google.com/macros/s/AKfycbzT6pHcru93o5MgtDNdlXyXD9SuiKT0Vs-totFx8GdHmyWXaqfZSbtDLI9TiHJjLfOW/exec';
+            // Optional shared secret (set same in Apps Script if you use it)
+            const API_KEY  = '';
+
+  /* ==== helpers ==== */
+  const escapeHtml = (s) => String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const setLoading = (btn, on) => {
+    if (!btn) return;
+    if (on) { btn.dataset.prevText = btn.textContent; btn.textContent = 'Checking…'; btn.disabled = true; }
+    else { btn.textContent = btn.dataset.prevText || 'Verify'; btn.disabled = false; }
+  };
+  const render = (el, ok, title, details='') => {
+    if (!el) return;
+    el.innerHTML = ok
+      ? `<div style="color:#27ae60;">✅ ${escapeHtml(title)}${details ? '<br>'+details : ''}</div>`
+      : `<div style="color:#c0392b;">❌ ${escapeHtml(title)}${details ? '<br>'+details : ''}</div>`;
+  };
+  async function callAPI(params) {
+    const p = new URLSearchParams(params);
+    if (API_KEY) p.set('key', API_KEY);
+    const url = `${BASE_URL}?${p.toString()}`;
+    const res = await fetch(url, { method: 'GET', mode: 'cors', cache: 'no-store' });
+    if (!res.ok) throw new Error('network');
+    return res.json();
+  }
+
+  /* small helper: build a single-line warranty status */
+  function warrantyLineFrom(data) {
+    if (!data || !data.warrantyExpiry) return '';
+    if (data.valid) return 'Warranty: Active until ' + escapeHtml(data.warrantyExpiry);
+    if (data.reason === 'expired') return 'Warranty: Expired on ' + escapeHtml(data.warrantyExpiry);
+    return '';
+  }
+
+  /* Decide messaging from API response (supports product + warranty) */
+  function interpret(data, kind) {
+    if (data && data.ok === false) {
+      return { ok:false, title:'Verification failed (' + (data.error || 'unknown') + ').', extra:'' };
+    }
+    const found = (typeof data?.found === 'boolean') ? data.found : !!data?.valid;
+
+    if (!found) {
+      return {
+        ok:false,
+        title: (kind === 'product') ? 'Not Registered Product / Not Original' : 'Not Registered Warranty',
+        extra:''
+      };
+    }
+
+    if (kind === 'product') {
+      // Product authenticity = true if serial found, regardless of warranty status
+      return { ok:true, title:'Oryxa Original Product', extra:''};
+    }
+
+    // Warranty flow (show only expiry info)
+    if (data.valid) {
+      return { ok:true, title:'Valid Oryxa Warranty Certificate',
+               extra: data.warrantyExpiry ? 'Valid until: ' + escapeHtml(data.warrantyExpiry) : '' };
+    } else {
+      return { ok:false, title:'Not Valid — expired',
+               extra: data.warrantyExpiry ? 'Expired on: ' + escapeHtml(data.warrantyExpiry) : '' };
+    }
+  }
+
+  /* ===== hook up forms ===== */
+  // Product
+  const productForm   = document.getElementById('product-check-form');
+  const productInput  = document.getElementById('serialNumber');
+  const productBtn    = document.getElementById('verifyProductBtn');
+  const productResult = document.getElementById('product-result');
+
+  productForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const serial = (productInput?.value || '').trim().toUpperCase();
+    if (!serial) { render(productResult, false, 'Please enter a serial number.'); return; }
+    setLoading(productBtn, true);
+    try {
+      const data = await callAPI({ serial });
+      const view = interpret(data, 'product');
+      render(productResult, view.ok, view.title, view.extra);
+    } catch (err) {
+      render(productResult, false, 'Verification failed. Try again later.');
+    } finally {
+      setLoading(productBtn, false);
+    }
+  });
+
+  // Warranty
+  const warrantyForm   = document.getElementById('warranty-check-form');
+  const warrantyInput  = document.getElementById('warrantyNumber');
+  const warrantyBtn    = document.getElementById('verifyWarrantyBtn');
+  const warrantyResult = document.getElementById('warranty-result');
+
+  warrantyForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const warranty = (warrantyInput?.value || '').trim().toUpperCase();
+    if (!warranty) { render(warrantyResult, false, 'Please enter a warranty certificate number.'); return; }
+    setLoading(warrantyBtn, true);
+    try {
+      const data = await callAPI({ warranty });
+      const view = interpret(data, 'warranty');
+      render(warrantyResult, view.ok, view.title, view.extra);
+    } catch (err) {
+      render(warrantyResult, false, 'Verification failed. Try again later.');
+    } finally {
+      setLoading(warrantyBtn, false);
+    }
+  });
+
+  // Optional: URL auto-fill (?serial=... & ?warranty=...)
+  const qs = new URLSearchParams(location.search);
+  if (qs.get('serial') && productInput) {
+    productInput.value = qs.get('serial').toUpperCase();
+    productForm.requestSubmit();
+  }
+  if (qs.get('warranty') && warrantyInput) {
+    warrantyInput.value = qs.get('warranty').toUpperCase();
+    warrantyForm.requestSubmit();
+  }
+})();
+</script>
         </div>
       </div>
     </div>
   </main>
 
   <footer id="footer" class="footer position-relative dark-background">
-    
     <div class="container footer-top">
       <div class="row gy-4">
         <div class="col-lg-4 col-md-6 footer-about">
@@ -334,14 +328,12 @@
             <a href="https://www.linkedin.com/company/oryxa-energy-solutions/?viewAsMember=true"><i class="bi bi-linkedin"></i></a>
           </div>
         </div>
-
       </div>
     </div>
 
     <div class="container copyright text-center mt-4">
       <p>© <span>Copyright</span> <strong class="px-1 sitename">Oryxa Energy Solutions</strong> <span>All Rights Reserved</span></p>
     </div>
-
   </footer>
 
   <!-- Scroll Top -->
@@ -364,5 +356,4 @@
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
 </body>
-
 </html>
